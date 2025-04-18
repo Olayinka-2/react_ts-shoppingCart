@@ -1,33 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useState} from 'react';
+import {useQuery} from 'react-query'
+
+//  components
+import Item from "./Item/Item";
+import Drawer from "@mui/material/Drawer";
+import LinearProgress from "@mui/material/LinearProgress";
+import Grid from "@mui/material/Grid";
+import { AddShoppingCart } from '@mui/icons-material';
+import Badge from "@mui/material/Badge";
+
+// styles
+import Wrapper from './App.styles'; 
+
+export type CartItemType = {
+  id: number;
+  category: string;
+  description: string;
+  image: string;
+  price: number;
+  title: string;
+  amount: number;
+}
+
+
+const getProducts = async (): Promise<CartItemType[]>  => {
+  const response = await fetch('https://fakestoreapi.com/products');
+  return await response.json();
+} 
 
 function App() {
-  const [count, setCount] = useState(0)
+  const {data, isLoading, error} = useQuery<CartItemType[]>('products', getProducts);
+  console.log(data);
 
+  const getTotalItems = () => null;
+
+  const handleAddToCart = (clickedItem: CartItemType) => null;   
+
+  const handleRemoveFromCart = () => null; 
+
+  if(isLoading) return <LinearProgress />
+
+  if(error) return <div>Something Went Wrong</div>
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Wrapper>
+        <Grid container spacing={3}>
+          {data?.map(item => (
+              <Item item={item} handleAddToCart = {handleAddToCart} key={item.id}/>
+          ))}
+        </Grid>
+      </Wrapper>
     </>
   )
 }
