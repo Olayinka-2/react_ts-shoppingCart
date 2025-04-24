@@ -54,7 +54,18 @@ function App() {
     })
   };   
 
-  const handleRemoveFromCart = () => null;
+  const handleRemoveFromCart = (id: number) => {
+    setCartItems((prev) => (
+      prev.reduce((ack: CartItemType[], item) => {
+        if(item.id === id) {
+          if(item.amount === 1) return ack;
+          return [...ack, {...item, amount: item.amount - 1}]
+        } else {
+          return [...ack, item];
+        }
+      }, [])
+    ))
+  };
 
   if(isLoading) return <LinearProgress />
 
